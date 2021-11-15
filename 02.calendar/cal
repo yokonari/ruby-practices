@@ -1,0 +1,28 @@
+#!/usr/bin/env ruby
+
+require "date"
+require "optparse"
+require 'color_echo'
+
+options = ARGV.getopts("y:","m:")
+#引数-yと-mをハッシュで受け取り、変数optionsに代入
+
+year = (options["y"] || Date.today.year).to_i
+mon = (options["m"] || Date.today.mon).to_i
+#引数に値が存在する場合は変数に代入、存在しない場合はtodayの値を代入
+
+firstday = Date.new(year,mon,1) #月の初日を取得
+firstday.wday #初日の曜日を取得
+lastday = Date.new(year,mon,-1).day #月の最終日を取得
+
+puts firstday.strftime("%-m月 %Y").center(20) #月と西暦を中央揃えで表示
+puts %w[日 月 火 水 木 金 土].join(' ') #曜日を表示
+
+print "   " * firstday.wday #1日分の余白×初日の曜日
+
+(1..lastday).each do |day| #1から最終日までの日付を変数dに代入
+  print day.to_s.rjust(2) + " " #日付を文字列に変換して右寄せで表示して空文字を追加
+  print "\n" if Date.new(year,mon,day).wday == 6 #オブジェクトのwday(曜日)が6(土曜日)の場合は改行を追加
+  CE.once.tx(:reverse_video) if Date.new(year,mon,day).day == (Date.today - 1).day #今日の日付を反転
+end
+print "\n" #改行を追加
