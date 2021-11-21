@@ -6,30 +6,12 @@ scores = score.split(',')
 
 shots = []
 scores.each do |s|
-  if s == 'X'
-    shots << 10 << 0
-  else
-    shots << s.to_i
-  end
+  s == 'X' ? shots << 10 << 0 : shots << s.to_i
 end
 
-frames = []
-shots.each_slice(2) do |s|
-  frames << if s == [10, 0]
-              [s.shift]
-            else
-              s
-            end
-end
+frames = shots.each_slice(2).to_a
 
-frames = case frames.size
-         when 12
-           frames[0..8] + [frames[9..11].flatten] + frames[10..11]
-         when 11
-           frames[0..8] + [frames[9..10].flatten] + [frames[10]]
-         else
-           frames[0..9]
-         end
+frames = frames[0..8] + [frames[9..].flatten] + frames[10..]
 
 point = 0
 frames[0..9].each_with_index do |frame, i|
