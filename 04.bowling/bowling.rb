@@ -5,9 +5,7 @@ score = ARGV[0]
 scores = score.split(',')
 
 shots = []
-scores.each do |s|
-  s == 'X' ? shots << 10 << 0 : shots << s.to_i
-end
+scores.each {|s| s == 'X' ? shots << 10 << 0 : shots << s.to_i}
 
 frames = shots.each_slice(2).to_a
 
