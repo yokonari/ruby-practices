@@ -1,16 +1,16 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-class List
+class BasicList
   CULUMN = 3
 
   def main
     lists = []
-    ljust.each_slice(slice) do |n|
-      if n.size == slice
+    ljust_files.each_slice(calculate_row_count) do |n|
+      if n.size == calculate_row_count
         lists << n
       else
-        last_files = last.unshift(n).flatten
+        last_files = create_last_line.unshift(n).flatten
         last_files.pop(n.size)
         lists << last_files
       end
@@ -23,20 +23,24 @@ class List
     Dir.glob('*')
   end
 
-  def slice
-    fetch_files.size / CULUMN + 1
+  def calculate_row_count
+    if fetch_files.size > CULUMN
+      fetch_files.size / CULUMN + 1
+    else
+      1
+    end
   end
 
-  def last
-    Array.new(slice, nil)
+  def create_last_line
+    Array.new(calculate_row_count, nil)
   end
 
-  def ljust
+  def ljust_files
     length = fetch_files.map(&:length)
     list_ljust = length.max + 1
     fetch_files.map { |file| file.to_s.ljust(list_ljust) }
   end
 end
 
-list = List.new
+list = BasicList.new
 list.main
