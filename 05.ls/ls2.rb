@@ -28,16 +28,12 @@ class LS
 
     params = {}
     opt.on('-a') { |v| params[:a] = v }
-    opt.parse!(ARGV)
-    @fetched_files = if params[:a]
-                       Dir.glob('*', File::FNM_DOTMATCH)
-                     else
-                       Dir.glob('*')
-                     end
+    opt.parse(ARGV)
+    Dir.glob('*', params[:a] ? File::FNM_DOTMATCH : 0)
   end
 
   def calculate_row_count
-    files_size = @fetched_files.size
+    files_size = fetch_files.size
     if (files_size % CULUMN).zero?
       files_size / CULUMN
     else
@@ -50,10 +46,9 @@ class LS
   end
 
   def ljusted_files
-    fetch_files
-    length = @fetched_files.map(&:length)
+    length = fetch_files.map(&:length)
     list_ljust = length.max + 1
-    @fetched_files.map { |file| file.to_s.ljust(list_ljust) }
+    fetch_files.map { |file| file.to_s.ljust(list_ljust) }
   end
 end
 
