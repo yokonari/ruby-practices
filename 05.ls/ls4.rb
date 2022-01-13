@@ -62,8 +62,7 @@ class LS
   end
 
   def calculate_block_count_total
-    block_size = fetch_file_stat.map(&:blocks)
-    puts "合計 #{block_size.sum}"
+    puts "合計 #{fetch_file_stat.map(&:blocks).sum}"
   end
 
   def calculate_max_length
