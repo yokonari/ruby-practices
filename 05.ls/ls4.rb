@@ -58,33 +58,26 @@ class LS
   end
 
   def fetch_file_stat
-    fs = []
-    fetch_files.each { |file| fs << File.lstat(file.to_s) }
-    fs
+    fetch_files.map { |file| File.lstat(file.to_s) }
   end
 
   def calculate_block_count_total
-    block_size = []
-    fetch_file_stat.each { |file| block_size << file.blocks }
+    block_size = fetch_file_stat.map(&:blocks)
     puts "合計 #{block_size.sum}"
   end
 
   def calculate_max_length
-    nlink_length = []
-    uid_length = []
-    gid_length = []
-    size_length = []
-    fetch_file_stat.each do |fs|
-      nlink_length << fs.nlink.to_s.length
-      uid_length << Etc.getpwuid(fs.uid).name.length
-      gid_length << Etc.getpwuid(fs.gid).name.length
-      size_length << fs.size.to_s.length
-    end
-    { 'nlink' => nlink_length.max, 'uid' => uid_length.max, 'gid' => gid_length.max, 'size' => size_length.max }
+    {
+      nlink: fetch_file_stat.map { |fs| fs.nlink.to_s.length }.max,
+      uid: fetch_file_stat.map { |fs| Etc.getpwuid(fs.gid).name.length }.max,
+      gid: fetch_file_stat.map { |fs| Etc.getgrgid(fs.gid).name.length }.max,
+      size: fetch_file_stat.map { |fs| fs.size.to_s.length }.max
+    }
   end
 
   def l_option
     calculate_block_count_total
+    max_length = calculate_max_length
 
     fetch_files.each do |file|
       fs = File.lstat(file.to_s)
@@ -99,8 +92,7 @@ class LS
       gid = Etc.getgrgid(fs.gid).name
       size = fs.size
 
-      printf "%s%s %#{calculate_max_length.fetch('nlink')}d %-#{calculate_max_length.fetch('uid')}s %-#{\
-      calculate_max_length.fetch('gid')}s %#{calculate_max_length.fetch('size')}d ", \
+      printf "%s%s %#{max_length.fetch(:nlink)}d %-#{max_length.fetch(:uid)}s %-#{max_length.fetch(:gid)}s %#{max_length.fetch(:size)}d ", \
              type, mode, nlink, uid, gid, size
       print fs.mtime.strftime('%_m月 %e %H:%M') + " #{file}"
       print " -> #{File.readlink(file.to_s)}" if type == 'l'
