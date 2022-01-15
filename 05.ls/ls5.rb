@@ -8,7 +8,7 @@ class LS
   CULUMN = 3
 
   def main
-    parse_option[:l] ? sort_horizontally : sort_vertical
+    parse_option[:l] ? print_horizontally : print_vertically
   end
 
   private
@@ -24,7 +24,7 @@ class LS
     params
   end
 
-  def sort_vertical
+  def print_vertically
     lists = []
     ljusted_files.each_slice(calculate_row_count) do |n|
       if n.size == calculate_row_count
@@ -41,7 +41,7 @@ class LS
 
   def fetch_files
     base = Dir.glob('*')
-    parse_option[:a] ? base.unshift(Dir.glob('.*')).flatten! : base
+    parse_option[:a] ? base = Dir.glob('*', File::FNM_DOTMATCH) : base
     parse_option[:r] ? base.reverse : base
   end
 
@@ -64,7 +64,7 @@ class LS
     fetch_files.map { |file| file.to_s.ljust(list_ljust) }
   end
 
-  def sort_horizontally
+  def print_horizontally
     calculate_block_count_total
     max_length = calculate_max_length
 
