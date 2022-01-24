@@ -71,36 +71,42 @@ class WC
 
   def print_all_count(paths, path_counts, max_size_map, total_count)
     path_counts.each do |count|
-      printf([
+      format_count = [
         "%<line_count>#{max_size_map[:line_count] + 1}i",
         "%<lf_number>#{max_size_map[:lf_number] + 1}i",
         "%<byte_count>#{max_size_map[:byte_count]}i",
         "%<path>s\n"
-      ].join(' '), count)
+      ].join(' ')
+      printf(format_count, count)
     end
     return unless paths.size > 1
 
-    printf(
-      "%#{max_size_map[:line_count] + 1}i %#{max_size_map[:lf_number] + 1}i %#{max_size_map[:byte_count]}i 合計\n",
-      total_count[:line_count], total_count[:lf_number], total_count[:byte_count]
-    )
+    format_total_count = [
+      "%<line_count>#{max_size_map[:line_count] + 1}i",
+      "%<lf_number>#{max_size_map[:lf_number] + 1}i",
+      "%<byte_count>#{max_size_map[:byte_count]}i",
+      "合計\n"
+    ].join(' ')
+    printf(format_total_count, total_count)
   end
 
   def print_line_count(paths, path_counts, max_size_map, total_count)
     path_counts.each do |count|
       if paths.size == 1
-        printf([
-          '%<line_count>i',
-          "%<path>s\n"
-        ].join(' '), count)
+        format_line_count = ['%<line_count>i', "%<path>s\n"].join(' ')
+        printf(format_line_count, count)
       else
-        printf([
+        format_total_line_count = [
           "%<line_count>#{max_size_map[:line_count] + 1}i",
           "%<path>s\n"
-        ].join(' '), count)
+        ].join(' ')
+        printf(format_total_line_count, count)
       end
     end
-    printf("%#{max_size_map[:line_count] + 1}i 合計\n", total_count[:line_count]) if paths.size > 1
+    return unless paths.size > 1
+
+    printf("%<line_count>#{max_size_map[:line_count] + 1}i 合計\n",
+           total_count)
   end
 end
 
