@@ -21,11 +21,11 @@ class WC
   def accept_stdin(**params)
     lines = readlines
     if params[:line_count]
-      puts lines.join(',').count("\n").to_s
+      puts lines.length
     else
       puts format(
         '%<line_count>7i%<lf_number>8i%<bytesize>8i',
-        line_count: lines.join(',').count("\n"),
+        line_count: lines.length,
         lf_number: lines.to_s.split(/\s+/).size,
         bytesize: lines.join.bytesize
       )
@@ -55,9 +55,9 @@ class WC
 
   def build_total(path_counts)
     {
-      line_count: path_counts.map { |count| count[:line_count] }.sum,
-      lf_number: path_counts.map { |count| count[:lf_number] }.sum,
-      byte_count: path_counts.map { |count| count[:byte_count] }.sum
+      line_count: path_counts.sum { |count| count[:line_count] },
+      lf_number: path_counts.sum { |count| count[:lf_number] },
+      byte_count: path_counts.sum { |count| count[:byte_count] }
     }
   end
 
