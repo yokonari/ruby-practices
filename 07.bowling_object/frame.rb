@@ -3,6 +3,8 @@
 class Frame
   attr_reader :first_shot, :second_shot, :third_shot
 
+  STRIKE = 10
+
   def initialize(first_shot, second_shot = 0, third_shot = 0)
     @first_shot = first_shot
     @second_shot = second_shot
@@ -12,7 +14,7 @@ class Frame
   def self.declare(shots)
     frames = []
     frame = []
-    shots.map do |shot|
+    shots.each do |shot|
       frame << shot
 
       if frames.size < 10
@@ -29,11 +31,18 @@ class Frame
 
   def self.prepare(shots)
     frames = declare(shots)
-    overwrite_frames = []
-    frames.each do |frame|
-      frame = Frame.new(*frame)
-      overwrite_frames << frame
-    end
-    overwrite_frames
+    frames.map { |frame| Frame.new(*frame) }
+  end
+
+  def strike?
+    first_shot == STRIKE
+  end
+
+  def spare?
+    !strike? && first_shot + second_shot == 10
+  end
+
+  def sum
+    first_shot + second_shot + third_shot
   end
 end

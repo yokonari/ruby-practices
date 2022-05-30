@@ -25,12 +25,12 @@ class Game
 
     frames.each_with_index do |frame, index|
       left_frames = left_frames(frames, index)
-      point += if strike?(frame) && last_frame?(index) == false
+      point += if frame.strike? && !last_frame?(index)
                  strike_with_bonus(left_frames)
-               elsif spare?(frame) && last_frame?(index) == false
+               elsif frame.spare? && !last_frame?(index)
                  spare_with_bonus(left_frames)
                else
-                 sum(frame)
+                 frame.sum
                end
     end
     puts point
@@ -57,18 +57,6 @@ class Game
 
   def spare_with_bonus(left_frames)
     10 + left_frames[:next_frame].first_shot
-  end
-
-  def strike?(frame)
-    frame.first_shot == 10
-  end
-
-  def spare?(frame)
-    frame.first_shot + frame.second_shot == 10
-  end
-
-  def sum(frame)
-    frame.first_shot + frame.second_shot + frame.third_shot
   end
 
   def last_frame?(index)

@@ -4,15 +4,11 @@ class Shot
   attr_reader :shot
 
   def initialize(shot)
-    @shot = shot
+    @shot = shot == 'X' ? 10 : shot.to_i
   end
 
   def self.prepare(scores)
     shots = scores.split(',')
-    shots.map { |shot| Shot.new(shot).convert_into_integer }
-  end
-
-  def convert_into_integer
-    shot == 'X' ? 10 : shot.to_i
+    shots.map { |shot| Shot.new(shot).shot }
   end
 end
