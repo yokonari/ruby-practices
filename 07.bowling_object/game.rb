@@ -22,41 +22,28 @@ class Game
 
   def calculate_score(frames)
     point = 0
-
-    frames.each_with_index do |frame, index|
-      left_frames = left_frames(frames, index)
-      point += if frame.strike? && !last_frame?(index)
-                 strike_with_bonus(left_frames)
-               elsif frame.spare? && !last_frame?(index)
-                 spare_with_bonus(left_frames)
+    (frames + [nil, nil]).each_cons(3).with_index do |next_frames, index|
+      point += if next_frames[0].strike? && !last_frame?(index)
+                 strike_with_bonus(next_frames)
+               elsif next_frames[0].spare? && !last_frame?(index)
+                 spare_with_bonus(next_frames)
                else
-                 frame.sum
+                 next_frames[0].sum
                end
     end
     puts point
   end
 
-  def left_frames(frames, index)
-    left_frames = frames.slice(index, 3)
-    {
-      frame: left_frames[0],
-      next_frame: left_frames[1],
-      after_next_frame: left_frames[2]
-    }
-  end
-
-  def strike_with_bonus(left_frames)
-    if left_frames[:after_next_frame].nil?
-      STRIKE + left_frames[:next_frame].first_shot + left_frames[:next_frame].second_shot
-    elsif left_frames[:next_frame].first_shot == STRIKE
-      STRIKE + STRIKE + left_frames[:after_next_frame].first_shot
+  def strike_with_bonus(next_frames)
+    if next_frames[1].first_shot == STRIKE && !next_frames[2].nil?
+      STRIKE + STRIKE + next_frames[2].first_shot
     else
-      STRIKE + left_frames[:next_frame].first_shot + left_frames[:next_frame].second_shot
+      STRIKE + next_frames[1].first_shot + next_frames[1].second_shot
     end
   end
 
-  def spare_with_bonus(left_frames)
-    10 + left_frames[:next_frame].first_shot
+  def spare_with_bonus(next_frames)
+    10 + next_frames[1].first_shot
   end
 
   def last_frame?(index)
